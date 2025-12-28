@@ -177,7 +177,7 @@ with col1:
         </p>
     </div>
     """, unsafe_allow_html=True)
-    st.caption(f"Giá vốn 1 sp = {base_cogs:,.0f} + {added_cost_1:,.0f} (KM)")
+    st.caption(f"Giá vốn hiện tại/sp = {base_cogs:,.0f} + {added_cost_1:,.0f} (KM) = **{total_cogs_unit_1:,.0f} VNĐ/sp**")
 
 # === KỊCH BẢN 2 ===
 with col2:
