@@ -1,22 +1,61 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import time
 
-st.set_page_config(page_title="The Anh Chu Le - Sales Tool", page_icon="💊", layout="wide")
+st.set_page_config(page_title="The Anh - Sales Tool", page_icon="💊", layout="wide")
+
+# --- PHẦN 1: HỆ THỐNG ĐĂNG NHẬP (LOGIN SYSTEM) ---
+def check_password():
+    """Kiểm tra mật khẩu nhập vào có khớp với Secrets không"""
+    def password_entered():
+        if st.session_state["password"] == st.secrets["PASSWORD"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # Xóa pass khỏi bộ nhớ tạm cho an toàn
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # Lần đầu vào trang, chưa đăng nhập
+        st.text_input(
+            "🔒 Vui lòng nhập mật khẩu truy cập:", 
+            type="password", 
+            on_change=password_entered, 
+            key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Nhập sai mật khẩu
+        st.text_input(
+            "🔒 Vui lòng nhập mật khẩu truy cập:", 
+            type="password", 
+            on_change=password_entered, 
+            key="password"
+        )
+        st.error("❌ Mật khẩu không đúng. Vui lòng thử lại.")
+        return False
+    else:
+        # Đăng nhập thành công
+        return True
+
+# --- NẾU CHƯA ĐĂNG NHẬP THÌ DỪNG LẠI TẠI ĐÂY ---
+if not check_password():
+    st.stop()  # Lệnh này chặn toàn bộ code phía dưới không cho chạy
+
+# =========================================================
+# TỪ ĐÂY TRỞ XUỐNG LÀ NỘI DUNG CHÍNH CỦA APP (CHỈ HIỆN KHI ĐÃ LOGIN)
+# =========================================================
 
 # --- CẤU HÌNH ẢNH CV ---
-# Link ảnh CV của bạn (Giữ nguyên)
 cv_img_url = "https://raw.githubusercontent.com/theanhhvtc/Sales_Strategy_Tool/main/cv_img.jpg" 
 
-# --- CSS TRANG TRÍ (Đã xóa phần hình nền) ---
+# --- CSS TRANG TRÍ ---
 st.markdown(f"""
 <style>
-    /* 1. CSS cho các hộp số liệu (Giữ lại để làm đẹp kết quả) */
     .target-box {{ background-color: #d1eaed; padding: 15px; border-radius: 10px; border-left: 5px solid #00cec9; }}
     .result-box {{ background-color: #ffeaa7; padding: 15px; border-radius: 10px; border-left: 5px solid #fdcb6e; }}
     .big-number {{ font-size: 24px; font-weight: bold; color: #2d3436; }}
     
-    /* 2. Footer bản quyền */
     .footer {{
         position: fixed;
         left: 0;
@@ -31,7 +70,6 @@ st.markdown(f"""
         z-index: 100;
     }}
     
-    /* 3. Ảnh CV nhỏ ở góc phải dưới */
     #cv-image {{
         position: fixed;
         bottom: 50px; 
@@ -44,7 +82,7 @@ st.markdown(f"""
         z-index: 101;
         transition: transform 0.3s;
         object-fit: cover;
-        background-color: white; /* Thêm nền trắng cho khung ảnh để nổi bật */
+        background-color: white;
     }}
     
     #cv-image:hover {{
@@ -55,12 +93,12 @@ st.markdown(f"""
 
 # --- CHÈN ẢNH CV ---
 st.markdown(f"""
-<img id="cv-image" src="{cv_img_url}" title="Liên hệ: Thế Anh Chu Lê ">
+<img id="cv-image" src="{cv_img_url}" title="Liên hệ: The Anh">
 """, unsafe_allow_html=True)
 
 # --- TIÊU ĐỀ ---
 st.title("💊 Tool Tính Doanh Số Dược Phẩm")
-st.caption("Công cụ hỗ trợ ra quyết định kinh doanh - Developed by Thế Anh Chu Lê")
+st.caption("Công cụ hỗ trợ ra quyết định kinh doanh - Developed by The Anh")
 
 # --- SIDEBAR ---
 with st.sidebar:
@@ -82,7 +120,8 @@ col1, col2 = st.columns([1, 1.1])
 # === KỊCH BẢN 1 ===
 with col1:
     st.subheader("1️⃣ Kịch bản hiện tại")
-    current_rev = st.number_input("Doanh thu hiện tại (VNĐ)", value=550000000, step=10000000)
+    st.markdown('<p style="color: #d63031; font-size: 24px; font-weight: bold; margin-bottom: 5px;">Doanh thu hiện tại (VNĐ)</p>', unsafe_allow_html=True)
+    current_rev = st.number_input("Label An", value=550000000, step=10000000, label_visibility="collapsed")
     
     st.markdown("<b>Khuyến mại hiện tại (KM1):</b>", unsafe_allow_html=True)
     c1a, c1b = st.columns(2)
@@ -107,7 +146,7 @@ with col1:
 
 # === KỊCH BẢN 2 ===
 with col2:
-    st.subheader("2️⃣ Kịch bản Mới (Cộng dồn)")
+    st.subheader("2️⃣ Kịch bản Mới (KM thêm)")
     st.markdown("---")
     st.markdown("<b>Khuyến mại thêm (KM2):</b>", unsafe_allow_html=True)
     c2a, c2b = st.columns(2)
@@ -163,7 +202,7 @@ st.altair_chart(c)
 # --- FOOTER BẢN QUYỀN ---
 st.markdown("""
 <div class="footer">
-    <p>© 2025 Developed by <b>The Anh Chu Le</b>. All rights reserved.<br>
+    <p>© 2025 Developed by <b>The Anh</b>. All rights reserved.<br>
     <i>Dữ liệu chỉ mang tính chất mô phỏng nội bộ.</i></p>
 </div>
 """, unsafe_allow_html=True)
