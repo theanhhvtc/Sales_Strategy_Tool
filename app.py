@@ -16,7 +16,6 @@ def check_password():
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        # Lần đầu vào trang, chưa đăng nhập
         st.text_input(
             "🔒 Vui lòng nhập mật khẩu truy cập:", 
             type="password", 
@@ -25,7 +24,6 @@ def check_password():
         )
         return False
     elif not st.session_state["password_correct"]:
-        # Nhập sai mật khẩu
         st.text_input(
             "🔒 Vui lòng nhập mật khẩu truy cập:", 
             type="password", 
@@ -35,15 +33,14 @@ def check_password():
         st.error("❌ Mật khẩu không đúng. Vui lòng thử lại.")
         return False
     else:
-        # Đăng nhập thành công
         return True
 
 # --- NẾU CHƯA ĐĂNG NHẬP THÌ DỪNG LẠI TẠI ĐÂY ---
 if not check_password():
-    st.stop()  # Lệnh này chặn toàn bộ code phía dưới không cho chạy
+    st.stop()
 
 # =========================================================
-# TỪ ĐÂY TRỞ XUỐNG LÀ NỘI DUNG CHÍNH CỦA APP (CHỈ HIỆN KHI ĐÃ LOGIN)
+# TỪ ĐÂY TRỞ XUỐNG LÀ NỘI DUNG CHÍNH CỦA APP
 # =========================================================
 
 # --- CẤU HÌNH ẢNH CV ---
@@ -60,8 +57,8 @@ st.markdown(f"""
         padding: 10px 15px; 
         border-radius: 10px; 
         border-left: 5px solid #fdcb6e; 
-        margin-top: 10px; /* Căn chỉnh cho khớp với ô nhập bên trái */
-        min-height: 88px; /* Giữ chiều cao cố định để không bị giật layout */
+        margin-top: 10px;
+        min-height: 88px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -110,18 +107,20 @@ st.markdown(f"""
 
 # --- CHÈN ẢNH CV ---
 st.markdown(f"""
-<img id="cv-image" src="{cv_img_url}" title="Liên hệ: Thế Anh Chu Lê">
+<img id="cv-image" src="{cv_img_url}" title="Liên hệ: The Anh">
 """, unsafe_allow_html=True)
 
 # --- TIÊU ĐỀ ---
 st.title("💊 Tool Tính Doanh Số Dược Phẩm")
-st.caption("Công cụ hỗ trợ ra quyết định kinh doanh - Developed by Thế Anh Chu Lê")
+st.caption("Công cụ hỗ trợ ra quyết định kinh doanh - Developed by The Anh")
 
 # --- SIDEBAR ---
 with st.sidebar:
     st.header("1. Thông số Cơ bản")
-    price = st.number_input("Giá bán (VNĐ)", value=120000, step=1000, format="%.0f")
-    base_cogs = st.number_input("Giá vốn (VNĐ)", value=30000, step=1000, format="%.0f")
+    # FIX WARNING: Thêm .0 vào value và step để biến thành số thực (float)
+    # Bỏ dòng hiển thị caption thừa
+    price = st.number_input("Giá bán (VNĐ)", value=120000.0, step=1000.0, format="%.0f")
+    base_cogs = st.number_input("Giá vốn (VNĐ)", value=30000.0, step=1000.0, format="%.0f")
     
     st.header("2. Chi phí Vận hành (% Doanh thu)")
     pct_mgmt = st.number_input("% Chi phí quản lý", value=10.0)
@@ -141,17 +140,17 @@ with col1:
     # INPUT DOANH THU CŨ
     st.markdown('<p style="color: #d63031; font-size: 24px; font-weight: bold; margin-bottom: 5px;">Doanh thu hiện tại (VNĐ)</p>', unsafe_allow_html=True)
     
+    # FIX WARNING: value=550000000.0 (thêm .0)
     current_rev = st.number_input(
         "Label An", 
-        value=550000000, 
-        step=10000000, 
+        value=550000000.0, 
+        step=10000000.0, 
         label_visibility="collapsed",
         format="%.0f"
     )
-    # Review số tiền
+    # Giữ lại dòng review thông minh ở đây (theo yêu cầu)
     st.markdown(f"👉 Hiển thị: <span class='money-text'>{current_rev:,.0f} VNĐ</span>", unsafe_allow_html=True)
     
-    # KHOẢNG CÁCH CHO ĐẸP
     st.markdown("---") 
 
     st.markdown("<b>Khuyến mại hiện tại (KM1):</b>", unsafe_allow_html=True)
@@ -181,18 +180,15 @@ with col2:
     
     st.markdown('<p style="color: #d63031; font-size: 24px; font-weight: bold; margin-bottom: 5px;">Doanh thu CẦN ĐẠT (VNĐ)</p>', unsafe_allow_html=True)
     
-    # [QUAN TRỌNG] TẠO MỘT CÁI HỘP RỖNG (PLACEHOLDER) Ở ĐÂY ĐỂ GIỮ CHỖ
-    # Kết quả tính toán sẽ được "bắn" ngược lên đây sau khi code chạy xong bên dưới
+    # Placeholder giữ chỗ
     result_placeholder = st.empty()
     
-    # Hiển thị tạm một cái box trống cho cân layout
     result_placeholder.markdown("""
     <div class="result-box-top">
         <p style="color: #636e72;">Đang tính toán...</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # KHOẢNG CÁCH CHO ĐẸP
     st.markdown("---")
     
     st.markdown("<b>Khuyến mại thêm (KM2):</b>", unsafe_allow_html=True)
@@ -214,7 +210,6 @@ with col2:
     # TÍNH TOÁN FINAL
     required_rev = 0 
     if net_margin_pct_2 <= 0:
-        # Trường hợp Lỗ -> Bắn cảnh báo lên ô trên cùng
         result_placeholder.error("⛔ LỖ VỐN! Không thể tính doanh thu mục tiêu.")
         st.error(f"⛔ QUÁ TẢI! Tổng giá vốn ({total_cogs_unit_2:,.0f}đ) + Vận hành > Giá bán.")
     else:
@@ -222,7 +217,7 @@ with col2:
         diff_rev = required_rev - current_rev
         pct_increase = (diff_rev / current_rev) * 100
         
-        # [QUAN TRỌNG] BẮN KẾT QUẢ NGƯỢC LÊN Ô PLACEHOLDER Ở ĐẦU TRANG
+        # BẮN KẾT QUẢ LÊN PLACEHOLDER
         result_placeholder.markdown(f"""
         <div class="result-box-top">
             <span class="big-number" style="color:#d63031">{required_rev:,.0f} VNĐ</span>
@@ -230,7 +225,6 @@ with col2:
         </div>
         """, unsafe_allow_html=True)
         
-        # Hiển thị công thức ở dưới (giữ nguyên để giải thích)
         st.latex(r"DoanhThu = \frac{\text{Lợi Nhuận Cũ}}{\text{Biên Lãi Mới (" + f"{net_margin_pct_2*100:.1f}\%" + r")}}")
 
 # --- BIỂU ĐỒ NGANG ---
