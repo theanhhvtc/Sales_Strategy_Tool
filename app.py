@@ -2,44 +2,21 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 
-st.set_page_config(page_title="The Anh - Sales Tool", page_icon="💊", layout="wide")
+st.set_page_config(page_title="The Anh Chu Le - Sales Tool", page_icon="💊", layout="wide")
 
-# --- PHẦN 1: TRANG TRÍ GIAO DIỆN (CSS) ---
-# 1. Link ảnh nền (Background)
-bg_img_url = "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-
-# 2. Link ảnh CV (Avatar)
-# HÃY DÁN LINK ẢNH RAW TỪ GITHUB CỦA BẠN VÀO DÒNG DƯỚI ĐÂY:
+# --- CẤU HÌNH ẢNH CV ---
+# Link ảnh CV của bạn (Giữ nguyên)
 cv_img_url = "https://raw.githubusercontent.com/theanhhvtc/Sales_Strategy_Tool/main/cv_img.jpg" 
 
+# --- CSS TRANG TRÍ (Đã xóa phần hình nền) ---
 st.markdown(f"""
 <style>
-    /* 1. Thiết lập hình nền */
-    .stApp {{
-        background-image: url("{bg_img_url}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-    }}
-    
-    /* Làm mờ nền */
-    .stApp::before {{
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 255, 255, 0.85);
-        z-index: -1;
-    }}
-
-    /* 2. CSS cho các hộp số liệu */
+    /* 1. CSS cho các hộp số liệu (Giữ lại để làm đẹp kết quả) */
     .target-box {{ background-color: #d1eaed; padding: 15px; border-radius: 10px; border-left: 5px solid #00cec9; }}
     .result-box {{ background-color: #ffeaa7; padding: 15px; border-radius: 10px; border-left: 5px solid #fdcb6e; }}
     .big-number {{ font-size: 24px; font-weight: bold; color: #2d3436; }}
     
-    /* 3. Footer bản quyền */
+    /* 2. Footer bản quyền */
     .footer {{
         position: fixed;
         left: 0;
@@ -54,35 +31,36 @@ st.markdown(f"""
         z-index: 100;
     }}
     
-    /* 4. Ảnh CV nhỏ ở góc phải dưới (ĐÃ SỬA LỖI NGOẶC KÉP) */
+    /* 3. Ảnh CV nhỏ ở góc phải dưới */
     #cv-image {{
         position: fixed;
-        bottom: 50px; /* Cách đáy 50px để không che footer */
+        bottom: 50px; 
         right: 20px;
         width: 60px;
         height: 60px;
-        border-radius: 50%; /* Bo tròn thành hình tròn */
-        border: 2px solid #fff;
-        box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+        border-radius: 50%;
+        border: 2px solid #ccc;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
         z-index: 101;
         transition: transform 0.3s;
-        object-fit: cover; /* Cắt ảnh vừa khung tròn */
+        object-fit: cover;
+        background-color: white; /* Thêm nền trắng cho khung ảnh để nổi bật */
     }}
     
     #cv-image:hover {{
-        transform: scale(1.1); /* Phóng to nhẹ khi di chuột vào */
+        transform: scale(1.1);
     }}
 </style>
 """, unsafe_allow_html=True)
 
-# --- CHÈN ẢNH CV VÀO HTML ---
+# --- CHÈN ẢNH CV ---
 st.markdown(f"""
-<img id="cv-image" src="{cv_img_url}" title="Liên hệ: The Anh">
+<img id="cv-image" src="{cv_img_url}" title="Liên hệ: Thế Anh Chu Lê ">
 """, unsafe_allow_html=True)
 
 # --- TIÊU ĐỀ ---
 st.title("💊 Tool Tính Doanh Số Dược Phẩm")
-st.caption("Công cụ hỗ trợ ra quyết định kinh doanh - Developed by The Anh")
+st.caption("Công cụ hỗ trợ ra quyết định kinh doanh - Developed by Thế Anh Chu Lê")
 
 # --- SIDEBAR ---
 with st.sidebar:
@@ -103,7 +81,7 @@ col1, col2 = st.columns([1, 1.1])
 
 # === KỊCH BẢN 1 ===
 with col1:
-    st.subheader("1️⃣ Kịch bản Cũ")
+    st.subheader("1️⃣ Kịch bản hiện tại")
     current_rev = st.number_input("Doanh thu hiện tại (VNĐ)", value=550000000, step=10000000)
     
     st.markdown("<b>Khuyến mại hiện tại (KM1):</b>", unsafe_allow_html=True)
@@ -182,10 +160,10 @@ c = alt.Chart(chart_df).mark_bar().encode(
 
 st.altair_chart(c)
 
-# --- FOOTER BẢN QUYỀN (HIỆN Ở CUỐI TRANG) ---
+# --- FOOTER BẢN QUYỀN ---
 st.markdown("""
 <div class="footer">
-    <p>© 2025 Developed by <b>The Anh</b>. All rights reserved.<br>
+    <p>© 2025 Developed by <b>The Anh Chu Le</b>. All rights reserved.<br>
     <i>Dữ liệu chỉ mang tính chất mô phỏng nội bộ.</i></p>
 </div>
 """, unsafe_allow_html=True)
